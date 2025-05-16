@@ -1,0 +1,68 @@
+import sys
+from system.executor import DockerExecutor
+from system.security import CommandValidator
+from system.interface import LLMInterface
+from system.logger import setup_logger
+from utils.config import load_config
+from utils.prompt import prompt
+from model.core import Agent
+from langchain_core.tools import tool
+
+class Main:
+    def __init__(self, filepath: str = "config.json"):
+        self.verbose = True
+        self.config = load_config(filepath)
+        self.logger = setup_logger(self.config['logging'])
+        self.executor = DockerExecutor(self.config['docker'])
+        self.validator = CommandValidator(self.config['security'])
+        self.interface = LLMInterface(self.config['llm'])
+        self.agent = Agent(self.config["llm"], [self.execute])
+
+    def ask(self):
+        if not sys.stdin.isatty():
+            input = sys.stdin.read().strip()
+        else:
+            input = prompt("OpenBeing Bioprod Agent > ")
+
+        output = self.agent.ask(input)
+
+        print(output)
+
+    @tool
+    def execute(self, input_str: str) -> str:
+        """Execute a command in a Docker container."""
+
+        input = self.interface.parse(input_str)
+
+        if not input["success"]:
+            self.logger.error(f"Parsing error: {input['error']}")
+            return "Parsing error"
+        
+        command = input.get("command", "")
+        is_valid, command = self.validator.validate(command)
+
+        if not is_valid:
+            self.logger.error(f"Validation error: {command}")
+            return "Validation error"
+        
+        execution = self.executor.run(command)
+        response = self.interface.standardify(execution)
+        
+        if not response["success"]:
+            self.logger.error(f"Execution error: {response['error']}")
+            return "Execution error"
+        
+        return response['output']
+            
+
+if __name__ == "__main__":
+    process = Main("config.json")
+    
+    while True:
+        try:
+            process.ask()
+        except KeyboardInterrupt:
+            print("\nExiting Bioprod.")
+            break
+        except Exception as e:
+            process.logger.error(e)

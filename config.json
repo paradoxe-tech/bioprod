@@ -1,0 +1,29 @@
+{
+  "docker": {
+    "image": "alpine",
+    "remove": true,
+    "network_disabled": true,
+    "mem_limit": "64m",
+    "cpu_period": 100000,
+    "cpu_quota": 50000
+  },
+  "security": {
+    "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl"],
+    "allowed_flags": {
+      "ls": ["-l", "-a", "-h", "-t", "-r"],
+      "cat": ["-n", "-b"]
+    },
+    "blocked_patterns": ["rm", "sudo", ">", ">>", "|", "&", ";", "$("]
+  },
+  "llm": {
+    "format_version": "1.0",
+    "expected_keys": ["command", "purpose"],
+    "model": "llama3.1",
+    "prompt": "prompt.txt"
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "bioprod.log"
+  }
+}
