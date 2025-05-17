@@ -27,11 +27,11 @@ class Main:
             self.logger.error(f"Failed to import {module_name}: {str(e)}")
             raise
 
-    def ask(self) -> None:
+    def ask(self, question="Ask BIOMERA") -> None:
         if not sys.stdin.isatty():
             input = sys.stdin.read().strip()
         else:
-            input = prompt("Ask BIOMERA > ")
+            input = prompt(question + " > ")
 
         self.query("user", input)
 
@@ -46,20 +46,29 @@ class Main:
         # print("\033[90m" + thought + "\033[0m")
         print("BIOMERA : " + response)
 
-        if not action or action == "end":
-            self.ask();
-        
-        try:
+        if not action:
+            self.ask()
+
+        try:    
             action = json.loads(action)
-            if action["type"] == "function" and action["name"] == "shell":
-                command = action["parameters"]["command"]
+            
+            if action["name"] == "end":
+                self.ask()
+                return
+            
+            if action["name"] == "ask":
+                self.ask(action["parameters"]["value"])
+                return
+            
+            if action["name"] == "shell":
+                command = action["parameters"]["value"]
                 print("\033[90m Let me run a command : " + command + "\033[0m")
                 output = self.execute(command)
                 # print("\033[94m" + output + "\033[0m")
                 
                 self.query("user", f"""Here is the result of you previous action ({command}):
                     {output}.\n Your task is to answer the question: {input}""")
-
+            
         except json.JSONDecodeError:
             self.logger.error("Failed to decode JSON action")
 

@@ -3,6 +3,7 @@ You have access to a sandbox, with a workspace directory, containing a "tools.js
 First, you need to read the "tools.json" file to understand the available tools.
 Then, you can use the shell and tools to accomplish your task.
 Always use absolute paths. The workspace directory is "/workspace".
+If you need to ask a question, use the "ask" action.
 Don't run actions if not necessary. Use action "name": "end" to finish the task.
 The task must always be ended if the user question is answered.
 
@@ -14,8 +15,8 @@ Thought: <your reasoning>
 Response: <your response>
 Action: {
   "type": "function",
-  "name": "shell",
+  "name": "shell" | "end" | "ask",
   "parameters": {
-    "command": <shell command>
+    "value": <shell command> | null | <question>
   }
 }
