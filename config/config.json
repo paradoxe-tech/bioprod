@@ -8,12 +8,12 @@
     "cpu_quota": 50000
   },
   "security": {
-    "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl"],
+    "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl", "cd", "wget"],
     "allowed_flags": {
       "ls": ["-l", "-a", "-h", "-t", "-r"],
       "cat": ["-n", "-b"]
     },
-    "blocked_patterns": ["rm", "sudo", ">", ">>", "|", "&", ";", "$("]
+    "blocked_patterns": ["rm", "sudo", "$("]
   },
   "llm": {
     "format_version": "1.0",

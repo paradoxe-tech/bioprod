@@ -27,34 +27,43 @@ class Main:
         try:
             agent_module = importlib.import_module(module_name)
             self.agent = agent_module.Agent(self.config["llm"])
-            self.logger.info(f"Using {'online' if use_online else 'local'} LLM agent")
         except ImportError as e:
             self.logger.error(f"Failed to import {module_name}: {str(e)}")
             raise
 
-    def ask(self):
+    def ask(self) -> None:
         if not sys.stdin.isatty():
             input = sys.stdin.read().strip()
         else:
-            input = prompt("OpenBeing Bioprod Agent > ")
+            input = prompt("Ask BIOMERA > ")
 
-        output = self.agent.ask(input)
+        self.query("user", input)
+
+    def query(self, role: str, input: str) -> None:
+        output = self.agent.ask(role, input)
 
         thought = output.split("Thought:")[1].split("Response:")[0].strip()
         response = output.split("Response:")[1].split("Action:")[0].strip()
         action = output.split("Action:")[1].strip()
 
-        # print in grey
-        print("\033[90m" + thought + "\033[0m")
-        print(response)
+        # print("\033[91m" + input + "\033[0m")
+        # print("\033[90m" + thought + "\033[0m")
+        print("BIOMERA : " + response)
 
+        if not action or action == "end":
+            self.ask();
+        
         try:
             action = json.loads(action)
             if action["type"] == "function" and action["name"] == "shell":
                 command = action["parameters"]["command"]
-                print("\033[90m $ " + command + "\033[0m")
-                response = self.execute(command)
-                print("\033[94m" + response + "\033[0m")
+                print("\033[90m Let me run a command : " + command + "\033[0m")
+                output = self.execute(command)
+                # print("\033[94m" + output + "\033[0m")
+                
+                self.query("user", f"""Here is the result of you previous action ({command}):
+                    {output}.\n Your task is to answer the question: {input}""")
+
         except json.JSONDecodeError:
             self.logger.error("Failed to decode JSON action")
 
@@ -92,7 +101,6 @@ if __name__ == "__main__":
             process.ask()
         except KeyboardInterrupt:
             print("\n" + tree(process.executor.list_files()))
-            process.logger.info("\nExiting Bioprod.")
             break
         except Exception as e:
             process.logger.error(e)

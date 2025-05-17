@@ -27,7 +27,7 @@ class Agent:
                     }
                 ]
         
-    def ask(self, query: str) -> str:
+    def ask(self, role: str, query: str) -> str:
         if not self.api_key:
             return "Please set the FIREWORKS_API_KEY environment variable."
             
@@ -37,7 +37,7 @@ class Agent:
                 "Authorization": f"Bearer {self.api_key}"
             }
 
-            self.messages.append({"role": "user", "content": query})
+            self.messages.append({"role": role, "content": query})
 
             payload = {
                 "model": self.model_name,

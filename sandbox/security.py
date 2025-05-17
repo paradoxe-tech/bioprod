@@ -28,4 +28,4 @@ class CommandValidator:
             return True, parsed
             
         except Exception as e:
-            return False, f"Erreur de validation: {str(e)}"
+            return False, f"Validation error: {str(e)}"

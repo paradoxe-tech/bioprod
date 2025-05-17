@@ -28,7 +28,10 @@ class DockerExecutor:
                     "error": "Container not started"
                 }
             
-            exec_log = self.container.exec_run(command)
+            if isinstance(command, list):
+                command = " ".join(command)
+            
+            exec_log = self.container.exec_run(f"sh -c '{command}'")
             output = exec_log.output.decode()
 
             return {
@@ -67,8 +70,7 @@ class DockerExecutor:
 
         tree = {}
         for path in output:
-            rel_path = path.replace("workspace/", "")
-            parts = rel_path.strip("/").split("/")
+            parts = path.strip("/").split("/")
 
             cursor = tree
             for part in parts[:-1]:
