@@ -1,11 +1,11 @@
 {
   "docker": {
-    "image": "alpine",
+    "image": "alpine:latest",
     "remove": true,
-    "network_disabled": true,
-    "mem_limit": "512m",
+    "network_disabled": false,
+    "mem_limit": "256m",
     "cpu_period": 100000,
-    "cpu_quota": 100000
+    "cpu_quota": 50000
   },
   "security": {
     "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl"],
@@ -19,8 +19,11 @@
     "format_version": "1.0",
     "expected_keys": ["command", "purpose"],
     "model": "mistral",
+    "online_model": "accounts/fireworks/models/llama-v3p3-70b-instruct",
+    "provider": "openai",
     "prompt": "config/prompt.txt",
-    "toolset": "config/tools.json"
+    "toolset": "config/tools.json",
+    "use_online": true
   },
   "logging": {
     "level": "INFO",

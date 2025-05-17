@@ -1,5 +1,5 @@
 from langchain_ollama import ChatOllama
-from langgraph.prebuilt import create_react_agent
+import ollama
 from typing import Dict
 
 class Agent:
@@ -7,11 +7,8 @@ class Agent:
     def __init__(self, config: Dict, tools):
         self.config = config
         self.tools = tools
-        self.model = ChatOllama(model=self.config["model"], verbose=True)
-        self.agent = create_react_agent(
-            model=self.model, 
-            tools=self.tools,
-        )
+        self.model_name = self.config["model"]
+        self.model = ChatOllama(model=self.model_name, verbose=False)
 
         self.messages = {
             "messages": [
@@ -33,11 +30,25 @@ class Agent:
         }
 
     def ask(self, query: str) -> str:
-        self.messages["messages"].append({"role": "user", "content": query})
-
-        response = self.agent.invoke({"messages": self.messages["messages"]})
-        answer = response["messages"][-1].content
-
-        self.messages["messages"].append({"role": "assistant", "content": answer})
-
-        return answer
+        try:
+            system_message = self.messages["messages"][0]["content"]
+            
+            response = ollama.chat(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": query}
+                ],
+                options={
+                    "num_predict": 512,
+                    "temperature": 0.7,
+                    "top_p": 0.9,
+                    "num_ctx": 2048
+                }
+            )
+            
+            answer = response["message"]["content"]
+            return answer
+            
+        except Exception as e:
+            return f"Error: {str(e)}"
