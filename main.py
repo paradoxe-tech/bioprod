@@ -9,16 +9,23 @@ from model.core import Agent
 from model.toolset import setup_toolset
 from langchain_core.tools import tool
 
+from utils.tree import tree
+
+def debug(message: str):
+    """Shell executor that runs in sandboxed terminal."""
+    print(f"[DEBUG] {message}")
+    return "Command was executed correctly."
+
 class Main:
     def __init__(self, filepath: str = "config/config.json"):
         self.verbose = True
         self.config = load_config(filepath)
         self.logger = setup_logger(self.config['logging'])
         self.toolset = setup_toolset(self.config['llm']["toolset"])
-        self.executor = DockerExecutor(self.config['docker'])
+        self.executor = DockerExecutor(self.config['docker'], self.config['llm'])
         self.validator = CommandValidator(self.config['security'], self.toolset)
         self.interface = LLMInterface(self.config['llm'])
-        self.agent = Agent(self.config["llm"], [self.execute])
+        self.agent = Agent(self.config["llm"], [debug])
 
     def ask(self):
         if not sys.stdin.isatty():
@@ -55,7 +62,6 @@ class Main:
             return "Execution error"
         
         return response['output']
-            
 
 if __name__ == "__main__":
     process = Main("config/config.json")
@@ -64,7 +70,8 @@ if __name__ == "__main__":
         try:
             process.ask()
         except KeyboardInterrupt:
-            print("\nExiting Bioprod.")
+            print("\n" + tree(process.executor.list_files()))
+            process.logger.info("\nExiting Bioprod.")
             break
         except Exception as e:
             process.logger.error(e)

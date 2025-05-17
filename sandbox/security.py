@@ -9,8 +9,6 @@ class CommandValidator:
         self.allowed_commands.extend(tools.keys())
         # self.allowed_flags = config.get("allowed_flags", {})
         self.blocked_patterns = config.get("blocked_patterns", [])
-
-        print(f"Allowed commands: {self.allowed_commands}")
     
     def validate(self, command: str) -> Tuple[bool, Union[List[str], str]]:
         try:

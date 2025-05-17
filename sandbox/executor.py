@@ -1,22 +1,23 @@
-import docker, re
+import docker, re, os, io, tarfile
 from typing import Dict, List, Union, Optional
 from docker.models.containers import Container
 
 class DockerExecutor:
     
-    def __init__(self, config: Dict):
+    def __init__(self, doker_config: Dict, llm_config: Dict):
         self.client = docker.from_env()
-        self.image = config.get("image", "alpine")
+        self.image = doker_config.get("image", "alpine")
         self.constraints = {
-            "remove": config.get("remove", True),
-            "network_disabled": config.get("network_disabled", True),
-            "mem_limit": config.get("mem_limit", "64m"),
-            "cpu_period": config.get("cpu_period", 100000),
-            "cpu_quota": config.get("cpu_quota", 50000),
+            "remove": doker_config.get("remove", True),
+            "network_disabled": doker_config.get("network_disabled", True),
+            "mem_limit": doker_config.get("mem_limit", "64m"),
+            "cpu_period": doker_config.get("cpu_period", 100000),
+            "cpu_quota": doker_config.get("cpu_quota", 50000),
         }
 
         self.container: Optional[Container] = None
         self.start()
+        self.upload(llm_config["toolset"], "workspace")
     
     def run(self, command: Union[str, List[str]]) -> Dict:
         try:
@@ -55,30 +56,43 @@ class DockerExecutor:
                 cpu_quota=self.constraints["cpu_quota"],
             )
 
-    def list_files(self, path: str = "/") -> Union[List[Dict[str, str]], Dict[str, str]]:
-        """
-        json hierarchy of the files in the container
-        each file has a name key and an owner key
-        returns a list of files or an error message
-        """
+            self.container.exec_run("mkdir -p workspace")
 
-        try:
-            if self.container is None:
-                return {"error": "Container not started"}
-            
-            exec_log = self.container.exec_run(f"ls -l {path}")
-            output = exec_log.output.decode()
-            files = []
-            for line in output.split("\n"):
-                if line:
-                    parts = re.split(r'\s+', line, maxsplit=8)
-                    
-                    if len(parts) > 2:
-                        file_info = {
-                            "name": parts[-1],
-                            "owner": parts[2]
-                        }
-                        files.append(file_info)
-            return files
-        except Exception as e:
-            return {"error": str(e)}
+    def list_files(self):
+        if self.container is None:
+            return {"error": "Container not started"}
+
+        exec_log = self.container.exec_run(f"find workspace -type f")
+        output = exec_log.output.decode().strip().split("\n")
+
+        tree = {}
+        for path in output:
+            rel_path = path.replace("workspace/", "")
+            parts = rel_path.strip("/").split("/")
+
+            cursor = tree
+            for part in parts[:-1]:
+                cursor = cursor.setdefault(part, {})
+            cursor[parts[-1]] = {}
+
+        def to_tree(d):
+            return [
+                {
+                    "name": key,
+                    "children": to_tree(value) if value else None
+                } for key, value in d.items()
+            ]
+
+        return to_tree(tree)
+
+
+    def upload(self, src_path: str, dst_path: str):
+        if self.container is None:
+            return {"error": "Container not started"}
+
+        tarstream = io.BytesIO()
+        with tarfile.open(fileobj=tarstream, mode='w') as tar:
+            tar.add(src_path, arcname=os.path.basename(src_path))
+        tarstream.seek(0)
+
+        self.container.put_archive(dst_path, tarstream)
