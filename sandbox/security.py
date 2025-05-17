@@ -3,11 +3,14 @@ from typing import List, Dict, Tuple, Union
 
 class CommandValidator:
  
-    def __init__(self, config: Dict):
+    def __init__(self, config: Dict, tools: Dict):
 
         self.allowed_commands = config.get("allowed_commands", [])
-        self.allowed_flags = config.get("allowed_flags", {})
+        self.allowed_commands.extend(tools.keys())
+        # self.allowed_flags = config.get("allowed_flags", {})
         self.blocked_patterns = config.get("blocked_patterns", [])
+
+        print(f"Allowed commands: {self.allowed_commands}")
     
     def validate(self, command: str) -> Tuple[bool, Union[List[str], str]]:
         try:

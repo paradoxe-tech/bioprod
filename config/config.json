@@ -19,7 +19,8 @@
     "format_version": "1.0",
     "expected_keys": ["command", "purpose"],
     "model": "llama3.1",
-    "prompt": "prompt.txt"
+    "prompt": "config/prompt.txt",
+    "toolset": "config/tools.json"
   },
   "logging": {
     "level": "INFO",

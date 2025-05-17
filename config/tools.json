@@ -1,0 +1,58 @@
+{
+  "blastn": {
+    "description": "Compares a nucleotide query sequence against a nucleotide database using BLAST.",
+    "usage": "blastn -query input.fasta -db nt -out results.txt",
+    "input_format": "FASTA",
+    "output_format": "Tabular text",
+    "notes": "Ensure the 'nt' database is properly indexed and available."
+  },
+  "clustalw2": {
+    "description": "Performs multiple sequence alignment on nucleotide or protein sequences.",
+    "usage": "clustalw2 -infile=input.fasta -outfile=alignment.aln",
+    "input_format": "FASTA",
+    "output_format": "CLUSTAL format",
+    "notes": "Supports guide trees and phylogenetic analysis options."
+  },
+  "muscle": {
+    "description": "Performs high-accuracy multiple sequence alignment.",
+    "usage": "muscle -in input.fasta -out alignment.aln",
+    "input_format": "FASTA",
+    "output_format": "FASTA, CLUSTAL",
+    "notes": "Suitable for large numbers of sequences."
+  },
+  "hmmscan": {
+    "description": "Searches protein sequences against a profile HMM database (e.g., Pfam).",
+    "usage": "hmmscan --tblout output.txt Pfam-A.hmm input.fasta",
+    "input_format": "FASTA",
+    "output_format": "Tabular text",
+    "notes": "Useful for identifying conserved protein domains."
+  },
+  "samtools": {
+    "description": "Tools for manipulating alignments in the SAM/BAM format.",
+    "usage": "samtools view -bS input.sam > output.bam",
+    "input_format": "SAM",
+    "output_format": "BAM",
+    "notes": "Can be used for sorting, indexing, and variant calling."
+  },
+  "bcftools": {
+    "description": "Manipulates VCF and BCF files for variant calling and filtering.",
+    "usage": "bcftools filter -s LowQual -e '%QUAL<20' input.vcf > output.vcf",
+    "input_format": "VCF",
+    "output_format": "VCF",
+    "notes": "Supports statistical analysis and annotations."
+  },
+  "fastqc": {
+    "description": "Performs quality control checks on raw sequence data.",
+    "usage": "fastqc input.fastq",
+    "input_format": "FASTQ",
+    "output_format": "HTML report",
+    "notes": "Useful for initial checks of sequencing runs."
+  },
+  "bowtie2": {
+    "description": "Aligns short DNA sequences to a large reference genome quickly.",
+    "usage": "bowtie2 -x reference -U reads.fq -S output.sam",
+    "input_format": "FASTQ",
+    "output_format": "SAM",
+    "notes": "Requires indexed reference genome."
+  }
+}

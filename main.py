@@ -1,20 +1,22 @@
 import sys
-from system.executor import DockerExecutor
-from system.security import CommandValidator
-from system.interface import LLMInterface
-from system.logger import setup_logger
+from sandbox.executor import DockerExecutor
+from sandbox.security import CommandValidator
+from sandbox.interface import LLMInterface
+from sandbox.logger import setup_logger
 from utils.config import load_config
 from utils.prompt import prompt
 from model.core import Agent
+from model.toolset import setup_toolset
 from langchain_core.tools import tool
 
 class Main:
-    def __init__(self, filepath: str = "config.json"):
+    def __init__(self, filepath: str = "config/config.json"):
         self.verbose = True
         self.config = load_config(filepath)
         self.logger = setup_logger(self.config['logging'])
+        self.toolset = setup_toolset(self.config['llm']["toolset"])
         self.executor = DockerExecutor(self.config['docker'])
-        self.validator = CommandValidator(self.config['security'])
+        self.validator = CommandValidator(self.config['security'], self.toolset)
         self.interface = LLMInterface(self.config['llm'])
         self.agent = Agent(self.config["llm"], [self.execute])
 
@@ -56,7 +58,7 @@ class Main:
             
 
 if __name__ == "__main__":
-    process = Main("config.json")
+    process = Main("config/config.json")
     
     while True:
         try:

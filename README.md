@@ -1,6 +1,6 @@
 # Installation
 
-First, get ollama and pull the model you want. It needs to support tool-embedding.
+First, get ollama and pull the model you want. It needs to s tool-embedding.
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
