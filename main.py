@@ -6,6 +6,7 @@ from sandbox.logger import setup_logger
 from utils.config import load_config
 from utils.prompt import prompt
 from utils.tree import tree
+from utils.parser import parse_output
 from model.toolset import setup_toolset
 
 class Main:
@@ -36,11 +37,13 @@ class Main:
         self.query("user", input)
 
     def query(self, role: str, input: str) -> None:
-        output = self.agent.ask(role, input)
 
-        thought = output.split("Thought:")[1].split("Response:")[0].strip()
-        response = output.split("Response:")[1].split("Action:")[0].strip()
-        action = output.split("Action:")[1].strip()
+        output = self.agent.ask(role, input)
+        thought, response, action = parse_output(output)
+
+        if output.startswith("{") and output.endswith("}"):
+            action = output
+            response = ""
 
         # print("\033[91m" + input + "\033[0m")
         # print("\033[90m" + thought + "\033[0m")
@@ -48,6 +51,7 @@ class Main:
 
         if not action:
             self.ask()
+            return
 
         try:    
             action = json.loads(action)
