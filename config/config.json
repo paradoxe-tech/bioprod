@@ -3,9 +3,9 @@
     "image": "alpine",
     "remove": true,
     "network_disabled": true,
-    "mem_limit": "64m",
+    "mem_limit": "512m",
     "cpu_period": 100000,
-    "cpu_quota": 50000
+    "cpu_quota": 100000
   },
   "security": {
     "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl"],
@@ -18,7 +18,7 @@
   "llm": {
     "format_version": "1.0",
     "expected_keys": ["command", "purpose"],
-    "model": "llama3.1",
+    "model": "mistral",
     "prompt": "config/prompt.txt",
     "toolset": "config/tools.json"
   },

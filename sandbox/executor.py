@@ -1,4 +1,4 @@
-import docker
+import docker, re
 from typing import Dict, List, Union, Optional
 from docker.models.containers import Container
 
@@ -54,3 +54,31 @@ class DockerExecutor:
                 cpu_period=self.constraints["cpu_period"],
                 cpu_quota=self.constraints["cpu_quota"],
             )
+
+    def list_files(self, path: str = "/") -> Union[List[Dict[str, str]], Dict[str, str]]:
+        """
+        json hierarchy of the files in the container
+        each file has a name key and an owner key
+        returns a list of files or an error message
+        """
+
+        try:
+            if self.container is None:
+                return {"error": "Container not started"}
+            
+            exec_log = self.container.exec_run(f"ls -l {path}")
+            output = exec_log.output.decode()
+            files = []
+            for line in output.split("\n"):
+                if line:
+                    parts = re.split(r'\s+', line, maxsplit=8)
+                    
+                    if len(parts) > 2:
+                        file_info = {
+                            "name": parts[-1],
+                            "owner": parts[2]
+                        }
+                        files.append(file_info)
+            return files
+        except Exception as e:
+            return {"error": str(e)}
