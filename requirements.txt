@@ -1,0 +1,4 @@
+docker_py==1.10.6
+langchain_core==0.3.60
+langchain_ollama==0.3.3
+langgraph==0.4.5
