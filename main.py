@@ -14,7 +14,7 @@ class Main:
         self.config = load_config(filepath)
         self.logger = setup_logger(self.config['logging'])
         self.toolset = setup_toolset(self.config['llm']["toolset"])
-        self.executor = DockerExecutor(self.config['docker'], self.config['llm'])
+        self.executor = DockerExecutor(self.config['docker'])
         self.validator = CommandValidator(self.config['security'], self.toolset)
         self.interface = LLMInterface(self.config['llm'])
         

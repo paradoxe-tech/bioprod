@@ -4,20 +4,22 @@ from docker.models.containers import Container
 
 class DockerExecutor:
     
-    def __init__(self, doker_config: Dict, llm_config: Dict):
+    def __init__(self, docker_config: Dict):
         self.client = docker.from_env()
-        self.image = doker_config.get("image", "alpine")
+        self.image = docker_config.get("image", "alpine")
         self.constraints = {
-            "remove": doker_config.get("remove", True),
-            "network_disabled": doker_config.get("network_disabled", True),
-            "mem_limit": doker_config.get("mem_limit", "64m"),
-            "cpu_period": doker_config.get("cpu_period", 100000),
-            "cpu_quota": doker_config.get("cpu_quota", 50000),
+            "remove": docker_config.get("remove", True),
+            "network_disabled": docker_config.get("network_disabled", True),
+            "mem_limit": docker_config.get("mem_limit", "64m"),
+            "cpu_period": docker_config.get("cpu_period", 100000),
+            "cpu_quota": docker_config.get("cpu_quota", 50000),
         }
 
         self.container: Optional[Container] = None
         self.start()
-        self.upload(llm_config["toolset"], "workspace")
+
+        for file in docker_config.get("copied_files", []):
+            self.upload(file, "workspace")
     
     def run(self, command: Union[str, List[str]]) -> Dict:
         try:

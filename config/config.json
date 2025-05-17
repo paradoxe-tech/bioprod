@@ -5,7 +5,11 @@
     "network_disabled": false,
     "mem_limit": "256m",
     "cpu_period": 100000,
-    "cpu_quota": 50000
+    "cpu_quota": 50000,
+    "copied_files": [
+      "config/tools.json",
+      "config/databases.json"
+    ]
   },
   "security": {
     "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl", "cd", "wget"],

@@ -1,0 +1,40 @@
+{
+  "databases": [
+    {
+      "name": "NCBI Nucleotide",
+      "description": "National Center for Biotechnology Information nucleotide database. Contains DNA and RNA sequences.",
+      "url": "https://www.ncbi.nlm.nih.gov/nuccore/",
+      "api": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+      "example_query": "insulin[gene] AND Homo sapiens[organism]",
+      "data_format": "FASTA, GenBank",
+      "notes": "Use Entrez Programming Utilities (E-utilities) to search and download sequences."
+    },
+    {
+      "name": "UniProt",
+      "description": "Universal Protein Resource database for protein sequences and functional information.",
+      "url": "https://www.uniprot.org/",
+      "api": "https://rest.uniprot.org/uniprotkb/search",
+      "example_query": "insulin AND organism:9606",
+      "data_format": "FASTA, XML, JSON",
+      "notes": "Supports REST API for programmatic access to protein sequences and annotations."
+    },
+    {
+      "name": "PDB",
+      "description": "Protein Data Bank, repository for 3D structural data of proteins and nucleic acids.",
+      "url": "https://www.rcsb.org/",
+      "api": "https://data.rcsb.org/rest/v1/core/entry",
+      "example_query": "insulin",
+      "data_format": "PDB format, mmCIF",
+      "notes": "Used for retrieving 3D structures and related metadata."
+    },
+    {
+      "name": "KEGG",
+      "description": "Kyoto Encyclopedia of Genes and Genomes, database for pathways and molecular interaction networks.",
+      "url": "https://www.kegg.jp/",
+      "api": "http://rest.kegg.jp/",
+      "example_query": "hsa:INS",
+      "data_format": "KGML, text",
+      "notes": "Useful for pathway and gene network information."
+    }
+  ]
+}
