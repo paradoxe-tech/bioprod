@@ -7,7 +7,6 @@ class Agent:
 
     def __init__(self, config: Dict):
         self.config = config
-        
         self.api_key = os.environ.get("FIREWORKS_API_KEY", "")
         if not self.api_key:
             print("\nWARNING: FIREWORKS_API_KEY environment variable not set!")

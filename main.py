@@ -23,7 +23,7 @@ class Main:
         module_name = "model.online" if use_online else "model.local"
         try:
             agent_module = importlib.import_module(module_name)
-            self.agent = agent_module.Agent(self.config["llm"])
+            self.agent = agent_module.Agent(self.config["llm"]) if use_online else agent_module.Agent(self.config["llm"], self.toolset)
         except ImportError as e:
             self.logger.error(f"Failed to import {module_name}: {str(e)}")
             raise

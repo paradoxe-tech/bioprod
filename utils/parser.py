@@ -21,5 +21,4 @@ def parse_output(output: str) -> tuple:
         start = positions[key] + len(key) + 1
         end = positions[sorted_keys[i + 1]] if i + 1 < len(sorted_keys) else len(output)
         sections[key] = output[start:end].strip()
-
     return sections["Thought"], sections["Response"], sections["Action"]

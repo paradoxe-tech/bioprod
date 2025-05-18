@@ -32,9 +32,45 @@
       "description": "Kyoto Encyclopedia of Genes and Genomes, database for pathways and molecular interaction networks.",
       "url": "https://www.kegg.jp/",
       "api": "http://rest.kegg.jp/",
-      "example_query": "hsa:INS",
+      "endpoints": {
+        "get_by_id": "http://rest.kegg.jp/get/",
+        "find_compound_by_name": "http://rest.kegg.jp/find/compound/"
+      },
+      "example_queries": {
+        "get_compound_by_id": "/get/C00031",
+        "get_reaction_by_id": "/get/R00031",
+        "get_pathway_by_id": "/get/pathway/map00010",
+        "get_ko_by_id": "/get/ko:K00001",
+        "find_compound_by_name": "/find/compound/glucose"
+      },
       "data_format": "KGML, text",
-      "notes": "Useful for pathway and gene network information."
+      "notes": "For compounds, reactions, and pathway maps, start by searching the compound KEGG id given its name (e.g. wget -O - http://rest.kegg.jp/find/compound/glucose), then fetch the data by ID (e.g. wget -O - http://rest.kegg.jp/get/map00010)."
+    },
+    {
+      "name": "Ensembl",
+      "description": "Genome browser for vertebrate genomes, providing access to genomic data.",
+      "url": "https://www.ensembl.org/",
+      "api": "https://rest.ensembl.org/",
+      "example_query": "/lookup/id/ENSG00000139618",
+      "data_format": "JSON, GFF3",
+      "notes": "REST API for accessing genomic data and annotations."
+    },
+    {
+      "name": "Reactome",
+      "description": "Biological pathway database with curated pathways and reactions.",
+      "url": "https://reactome.org/",
+      "api": "https://reactome.org/ContentService/data",
+      "example_query": "/pathways/REACT_1234",
+      "data_format": "BioPAX, SIF, JSON",
+      "notes": "REST API for retrieving pathway data."
     }
+    // {
+    //   "name": "BacDive",
+    //   "description": "Bacterial Diversity Metadatabase.",
+    //   "url": "https://bacdive.dsmz.de/",
+    //   "api": "https://bacdive.dsmz.de/api/v1/",
+    //   "access": "import bacdive; client = bacdive.BacdiveClient('yazidhoblos4@gmail.com', 'djAyrr4XhCW@73n'); client.setSearchType('exact'); for strain in client.retrieve(): print(strain)",
+    //   "notes": "write python code from access and run it with python"
+    // }
   ]
 }

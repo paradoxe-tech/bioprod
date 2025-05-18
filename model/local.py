@@ -29,7 +29,7 @@ class Agent:
             ]
         }
 
-    def ask(self, query: str) -> str:
+    def ask(self, role: str, query: str) -> str:
         try:
             system_message = self.messages["messages"][0]["content"]
             
@@ -37,7 +37,7 @@ class Agent:
                 model=self.model_name,
                 messages=[
                     {"role": "system", "content": system_message},
-                    {"role": "user", "content": query}
+                    {"role": role, "content": query}
                 ],
                 options={
                     "num_predict": 512,

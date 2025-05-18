@@ -12,7 +12,7 @@
     ]
   },
   "security": {
-    "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl", "cd", "wget"],
+    "allowed_commands": ["ls", "cat", "echo", "grep", "find", "wc", "curl", "cd", "wget", "awk", "cut","wget","python"],
     "allowed_flags": {
       "ls": ["-l", "-a", "-h", "-t", "-r"],
       "cat": ["-n", "-b"]
