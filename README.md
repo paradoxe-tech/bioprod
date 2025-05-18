@@ -20,9 +20,7 @@ ollama pull mistral
 To use online models that support function calling (like OpenAI models), set the following environment variables:
 
 ```bash
-export OPENAI_API_KEY="your_api_key_here"
-# Optional: For other OpenAI-compatible providers like Anyscale or Together.ai
-# export OPENAI_API_BASE="https://api.together.xyz/v1"
+export FIREWORKS_API_KEY="your_api_key_here"
 ```
 
 Then activate online mode by editing `config/config.json` and setting:
