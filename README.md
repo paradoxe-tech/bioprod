@@ -1,6 +1,6 @@
 # BioProd Agent
 
-A bioproduction agent specialized in molecular biology and biotechnology tasks. Able to run command inside of a docker container, which allows it to use every biotool available.
+The first bioproduction AI agent, specialized in molecular biology and biotechnology tasks. It allows for task automation and neophyte usage of complex tools, by leveraging various pipelines to collect data, design pathways, run analysis, enhance molecules and so much more. Technically, it is able to run command inside of a docker container, which allows it to use every biotool available.
 
 for a quick overview of the output results, see [https://biomera-view.replit.app/](https://biomera-view.replit.app/) !
 
