@@ -1,6 +1,8 @@
 # BioProd Agent
 
-A bioproduction agent specialized in molecular biology and biotechnology tasks.
+A bioproduction agent specialized in molecular biology and biotechnology tasks. Able to run command inside of a docker container, which allows it to use every biotool available.
+
+for a quick overview of the output results, see [https://biomera-view.replit.app/](https://biomera-view.replit.app/) !
 
 ## Installation
 
