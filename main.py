@@ -1,4 +1,5 @@
 import sys, importlib, json
+from typing import List
 from sandbox.executor import DockerExecutor
 from sandbox.security import CommandValidator
 from sandbox.interface import LLMInterface
@@ -18,6 +19,7 @@ class Main:
         self.executor = DockerExecutor(self.config['docker'])
         self.validator = CommandValidator(self.config['security'], self.toolset)
         self.interface = LLMInterface(self.config['llm'])
+        self.executed = []
         
         use_online = self.config["llm"].get("use_online", False)
         module_name = "model.online" if use_online else "model.local"
@@ -28,15 +30,25 @@ class Main:
             self.logger.error(f"Failed to import {module_name}: {str(e)}")
             raise
 
-    def ask(self, question="Ask BIOMERA") -> None:
-        if not sys.stdin.isatty():
-            input = sys.stdin.read().strip()
-        else:
-            input = prompt(question + " > ")
+    def ask(self, question = None) -> List[str]:
+        if __name__ == "__main__":
+            if not sys.stdin.isatty():
+                input = sys.stdin.read().strip()
+            else:
+                if question:
+                    input = prompt(question + " > ")
+                else:
+                    input = prompt("Ask Agent > ")
 
-        self.query("user", input)
+            return self.query("user", input)
+        
+        return [question] if question else []
+        
+    def query(self, role: str, input: str, stack = 0) -> List[str]:
 
-    def query(self, role: str, input: str) -> None:
+        if stack > 5:
+            self.logger.error("Stack overflow detected.")
+            return [f"! The model is not able to iterate more than {self.config['llm']['max_iterations']} times."]
 
         output = self.agent.ask(role, input)
         thought, response, action = parse_output(output)
@@ -45,71 +57,61 @@ class Main:
             action = output
             response = ""
 
-        # print("\033[91m" + input + "\033[0m")
-        # print("\033[90m" + thought + "\033[0m")
-        print("BIOMERA : " + response)
-
-        if not action:
-            self.ask()
-            return
+        if stack == 0:
+            self.executed = []
 
         try:    
             action = json.loads(action)
             
             if action["name"] == "end":
-                self.ask()
-                return
+                return [response] + self.ask()
             
             if action["name"] == "ask":
-                self.ask(action["parameters"]["value"])
-                return
+                return [response] + self.ask(action["parameters"]["value"])
             
             if action["name"] == "shell":
                 command = action["parameters"]["value"]
-                print("\033[90m Let me run a command : " + command + "\033[0m")
-                output = self.execute(command)
-                # print("\033[94m" + output + "\033[0m")
+
+                if stack > 0 and command in self.executed:
+                    self.logger.error(f"Command already executed: {command}")
+                    next = self.query("user", f"""Your previous action ({command}) was rejected because it has already been executed.
+                    Your task is to answer the question: {input}""", stack + 1)
+
+                    return [response, f"$ {command}", "! This command has already been executed."] + next
                 
-                self.query("user", f"""Here is the result of you previous action ({command}):
-                    {output}.\n Your task is to answer the question: {input}""")
-            
+                output = self.execute(command, stack)
+                next = self.query("user", f"""Here is the result of you previous action ({command}):
+                    {output}.\n Your task is to answer the question: {input}""", stack + 1)
+
+                return [response, f"$ {command}"] + next
+                
         except json.JSONDecodeError:
-            self.logger.error("Failed to decode JSON action")
+            pass
+        
+        return [response] + self.ask()
 
-
-    def execute(self, input_str: str) -> str:
+    def execute(self, input_str: str, stack = 0) -> str:
         """Execute a command in the workspace."""
 
         input = self.interface.parse(input_str)
 
         if not input["success"]:
             self.logger.error(f"Parsing error: {input['error']}")
-            return "Parsing error"
+            return "Parsing error: the format of the action is incorrect."
         
         command = input.get("command", "")
         is_valid, command = self.validator.validate(command)
 
         if not is_valid:
             self.logger.error(f"Validation error: {command}")
-            return "Validation error"
+            return "Validation error: {command} is not allowed."
         
         execution = self.executor.run(command)
+        self.executed.append(command)
         response = self.interface.standardify(execution)
         
         if not response["success"]:
             self.logger.error(f"Execution error: {response['error']}")
-            return "Execution error"
+            return "Execution error: {response['error']}"
         
         return response['output']
-
-if __name__ == "__main__":
-    process = Main("config/config.json")
-    
-    while True:
-        try:
-            process.ask()
-        except KeyboardInterrupt:
-            print("\n" + tree(process.executor.list_files()))
-            break
-        except Exception as e:
-            process.logger.error(e)

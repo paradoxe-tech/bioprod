@@ -27,7 +27,9 @@
     "provider": "openai",
     "prompt": "config/prompt.txt",
     "toolset": "config/tools.json",
-    "use_online": true
+    "use_online": true,
+    "max_iterations": 5,
+    "max_tokens": 1500
   },
   "logging": {
     "level": "INFO",

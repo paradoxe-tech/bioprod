@@ -63,14 +63,14 @@
       "example_query": "/pathways/REACT_1234",
       "data_format": "BioPAX, SIF, JSON",
       "notes": "REST API for retrieving pathway data."
+    },
+    {
+      "name": "BacDive",
+      "description": "Bacterial Diversity Metadatabase.",
+      "url": "https://bacdive.dsmz.de/",
+      "api": "https://bacdive.dsmz.de/api/v1/",
+      "access": "import bacdive; client = bacdive.BacdiveClient('yazidhoblos4@gmail.com', 'djAyrr4XhCW@73n'); client.setSearchType('exact'); for strain in client.retrieve(): print(strain)",
+      "notes": "write python code from access and run it with python"
     }
-    // {
-    //   "name": "BacDive",
-    //   "description": "Bacterial Diversity Metadatabase.",
-    //   "url": "https://bacdive.dsmz.de/",
-    //   "api": "https://bacdive.dsmz.de/api/v1/",
-    //   "access": "import bacdive; client = bacdive.BacdiveClient('yazidhoblos4@gmail.com', 'djAyrr4XhCW@73n'); client.setSearchType('exact'); for strain in client.retrieve(): print(strain)",
-    //   "notes": "write python code from access and run it with python"
-    // }
   ]
 }

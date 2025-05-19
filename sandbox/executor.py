@@ -33,7 +33,7 @@ class DockerExecutor:
             if isinstance(command, list):
                 command = " ".join(command)
             
-            exec_log = self.container.exec_run(f"sh -c '{command}'")
+            exec_log = self.container.exec_run(f"sh -c 'cd /workspace && {command}'")
             output = exec_log.output.decode()
 
             return {
