@@ -1,8 +1,12 @@
-# BioProd Agent
+# BIOMERA : BioProd Agent
 
-The first bioproduction AI agent, specialized in molecular biology and biotechnology tasks. It allows for task automation and neophyte usage of complex tools, by leveraging various pipelines to collect data, design pathways, run analysis, enhance molecules and so much more. Technically, it is able to run command inside of a docker container, which allows it to use every biotool available.
+The world-first bioproduction AI agent, specialized in molecular biology and biotechnology tasks. It allows for task automation and neophyte usage of complex tools, by leveraging various pipelines to collect data, design pathways, run analysis, enhance molecules and so much more. Technically, it is able to run command inside of a docker container, which allows it to use every biotool available.
 
 for a quick overview of the output results, see [https://biomera-view.replit.app/](https://biomera-view.replit.app/) !
+
+We're working on a graphical interface, but for now the Agent is running inside of a terminal. Some bindings for a web API are coming !
+
+![image](https://github.com/user-attachments/assets/4770b7f2-88fb-4062-9896-8037b69119e6)
 
 ## Installation
 
